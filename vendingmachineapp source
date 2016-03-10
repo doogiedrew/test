@@ -1,0 +1,450 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.awt.Font;
+
+/**
+ * The Vending Machine App contains a GUI which enables a user to choose a drink to have,
+ * pay and view the returned amount of each type of change.
+ * 
+ * @author Andrew Watt
+ * @version v0.1 15/01/2016
+ */
+
+
+public class VendingMachineApp extends JFrame
+                                    implements ActionListener
+{
+    //Variables
+    int paid;
+    int cost;
+    double paidFormat;
+    double changeFormat;    
+    String Drink;
+    
+	//Data formats
+    DecimalFormat pound = new DecimalFormat("£#,##0.00");    
+    DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    
+	//Button dimensions
+    Dimension d = new Dimension(225,50);
+    Dimension p = new Dimension(75,50);
+    Dimension dp = new Dimension(200,50);
+    
+	//Text styles
+    Font mainFont = new Font("", Font.PLAIN, 20);
+    Font moneyFont = new Font("", Font.BOLD, 14);
+    
+    //Drink Buttons and Sugar Radiobutton
+    JButton cofBlk = new JButton("Black Coffee");
+    JButton cofLat = new JButton("Latte");
+    JButton cofCap = new JButton("Cappuccino");
+    
+    JButton cofBlkSug = new JButton("Black Coffee with Sugar");
+    JButton cofLatSug = new JButton("Latte with Sugar");
+    JButton cofCapSug = new JButton("Cappuccino with Sugar");
+    
+    //Payment Buttons
+    JButton twoPound = new JButton("£2");
+    JButton onePound = new JButton("£1");
+    JButton fifty = new JButton("50p");
+    JButton twenty = new JButton("20p");
+    JButton ten = new JButton("10p");
+    
+    
+    //Confirm and Reset Buttons
+    JButton confirm = new JButton("Confirm Selection");
+    JButton reset = new JButton("Reset");
+    JButton payment = new JButton("Pay");
+    
+    //Text Fields/Displays
+    JTextField drinkName = new JTextField(18);
+    JTextField drinkCost = new JTextField(5);
+    JTextField payAmt = new JTextField(5);
+    JTextField chgTotal = new JTextField(5);
+    JTextField chgTwo = new JTextField(5);
+    JTextField chgOne = new JTextField(5);
+    JTextField chgFifty = new JTextField(5);
+    JTextField chgTwenty = new JTextField(5);
+    JTextField chgTen = new JTextField(5);
+    JLabel Change = new JLabel("Change:");
+    JLabel Paid = new JLabel("You have paid:");
+    JLabel Breakdown = new JLabel("Your change breakdown:");
+    JLabel Input = new JLabel();
+    
+    public static void main(String[] args) {
+        new VendingMachineApp();
+    }
+    
+    //GUI
+    public VendingMachineApp() {
+        setLayout(new BorderLayout());
+        setSize(800,600);
+        setTitle("Vending Machine");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);        
+        setResizable(false);
+        
+        //Top JPanel
+        JPanel top = new JPanel(new BorderLayout());
+        
+            JPanel topDrinkOne = new JPanel();
+                topDrinkOne.add(cofBlk);
+                    cofBlk.addActionListener(this);
+                    cofBlk.setPreferredSize(d);
+                topDrinkOne.add(cofLat);
+                    cofLat.addActionListener(this);
+                    cofLat.setPreferredSize(d);
+                topDrinkOne.add(cofCap);
+                    cofCap.addActionListener(this); 
+                    cofCap.setPreferredSize(d);
+               
+            top.add("North", topDrinkOne);
+                    
+            JPanel topDrinksTwo = new JPanel();                
+                topDrinksTwo.add(cofBlkSug);
+                    cofBlkSug.addActionListener(this);
+                    cofBlkSug.setPreferredSize(d);
+                topDrinksTwo.add(cofLatSug);                
+                    cofLatSug.addActionListener(this);
+                    cofLatSug.setPreferredSize(d);
+                topDrinksTwo.add(cofCapSug);
+                    cofCapSug.addActionListener(this);
+                    cofCapSug.setPreferredSize(d);
+                
+            top.add("Center", topDrinksTwo);
+            
+            JPanel drinkDisp = new JPanel();
+                drinkDisp.add(drinkName);
+                    drinkName.setEditable(false);
+                    drinkName.setFont(mainFont);
+                    drinkName.setHorizontalAlignment(JTextField.CENTER);
+                
+            top.add("South", drinkDisp);
+                            
+        add("North", top);
+            
+        //Center JPanel
+        JPanel center = new JPanel(new BorderLayout());                   
+            JPanel drinkConfirm = new JPanel();
+                drinkConfirm.add(confirm);
+                    confirm.addActionListener(this);
+                    confirm.setEnabled(false);
+                    confirm.setPreferredSize(dp);
+            center.add("North", drinkConfirm);
+                
+        add("Center", center);
+            
+            
+        //Bottom JPanel
+        JPanel bottom = new JPanel(new BorderLayout());
+            
+            JPanel bottomTop = new JPanel();
+            bottomTop.setLayout(new BoxLayout(bottomTop, BoxLayout.PAGE_AXIS));
+                JPanel coinTitle = new JPanel();
+                    coinTitle.add(Input);
+                        Input.setEnabled(false);
+                        Input.setFont(mainFont);
+                bottomTop.add("North", coinTitle);
+        
+                JPanel bottomCoins = new JPanel();
+                    bottomCoins.add(twoPound);
+                        twoPound.addActionListener(this);
+                        twoPound.setEnabled(false);
+                        twoPound.setPreferredSize(p);
+                    bottomCoins.add(onePound);
+                        onePound.addActionListener(this);
+                        onePound.setEnabled(false);
+                        onePound.setPreferredSize(p);
+                    bottomCoins.add(fifty);
+                        fifty.addActionListener(this);
+                        fifty.setEnabled(false);
+                        fifty.setPreferredSize(p);
+                    bottomCoins.add(twenty);
+                        twenty.addActionListener(this);
+                        twenty.setEnabled(false);
+                        twenty.setPreferredSize(p);
+                    bottomCoins.add(ten);
+                        ten.addActionListener(this);
+                        ten.setEnabled(false);
+                        ten.setPreferredSize(p);
+                
+                bottomTop.add("South", bottomCoins);
+                
+            bottom.add("North", bottomTop);
+                
+            JPanel bottomCenter = new JPanel();
+                
+                JPanel amountPaid = new JPanel();
+                amountPaid.setLayout(new BoxLayout(amountPaid, BoxLayout.PAGE_AXIS));
+                    amountPaid.add(Paid);
+                        Paid.setVisible(true);
+                        Paid.setFont(moneyFont);
+                    amountPaid.add(payAmt);
+                        payAmt.setEditable(false);
+                        payAmt.setHorizontalAlignment(JTextField.CENTER);
+                        payAmt.setFont(moneyFont);
+                
+                bottomCenter.add("West", amountPaid);
+                
+                JPanel changeTotal = new JPanel();
+                changeTotal.setLayout(new BoxLayout(changeTotal, BoxLayout.PAGE_AXIS));
+                    changeTotal.add(Change);
+                        Change.setVisible(true);
+                        Change.setFont(moneyFont);
+                    changeTotal.add(chgTotal);
+                        chgTotal.setEditable(false);
+                        chgTotal.setHorizontalAlignment(JTextField.CENTER);
+                        chgTotal.setFont(moneyFont);
+                
+                bottomCenter.add("East", changeTotal);
+                    
+                JPanel changeBreakdown = new JPanel();
+                changeBreakdown.setLayout(new BoxLayout(changeBreakdown, BoxLayout.PAGE_AXIS));
+                    changeBreakdown.add(Breakdown);
+                        Breakdown.setVisible(true);
+                        Breakdown.setFont(moneyFont);
+                    changeBreakdown.add(chgTwo);
+                        chgTwo.setEditable(false);
+                        chgTwo.setHorizontalAlignment(JTextField.CENTER);
+                        chgTwo.setFont(moneyFont);
+                    changeBreakdown.add(chgOne);
+                        chgOne.setEditable(false);
+                        chgOne.setHorizontalAlignment(JTextField.CENTER);
+                        chgOne.setFont(moneyFont);
+                    changeBreakdown.add(chgFifty);
+                        chgFifty.setEditable(false);
+                        chgFifty.setHorizontalAlignment(JTextField.CENTER);
+                        chgFifty.setFont(moneyFont);
+                    changeBreakdown.add(chgTwenty);
+                        chgTwenty.setEditable(false);
+                        chgTwenty.setHorizontalAlignment(JTextField.CENTER);
+                        chgTwenty.setFont(moneyFont);
+                    changeBreakdown.add(chgTen);
+                        chgTen.setEditable(false);
+                        chgTen.setHorizontalAlignment(JTextField.CENTER);
+                        chgTen.setFont(moneyFont);
+                    
+                bottomCenter.add("South", changeBreakdown);
+                    
+            bottom.add("Center", bottomCenter);
+                
+            JPanel bottomPay = new JPanel();
+                bottomPay.add(payment);
+                    payment.addActionListener(this);
+                    payment.setEnabled(false);
+                    payment.setPreferredSize(p);
+                bottomPay.add(reset);
+                    reset.addActionListener(this);
+                    reset.setEnabled(true);
+                    reset.setPreferredSize(p);
+                
+            bottom.add("South", bottomPay);          
+                
+        add("South", bottom);
+        
+        setEnabled(true);
+        setVisible(true);
+    }
+    
+    
+    
+    public void actionPerformed(ActionEvent x) {        
+                
+        //Drink Selection buttons            
+        if(x.getSource()==cofBlk) {
+            drinkName.setText("Black Coffee || 40p");
+            
+            cost = 40;
+            
+            Drink = "Black Coffee";
+            
+            confirm.setEnabled(true);
+        }
+        if(x.getSource()==cofLat) {
+            drinkName.setText("Latte || 50p");
+            
+            cost = 50;
+            
+            Drink = "Latte";
+            
+            confirm.setEnabled(true);
+        }
+        if(x.getSource()==cofCap) {
+            drinkName.setText("Cappuccino || 70p");
+            
+            cost = 70;
+            
+            Drink = "Cappuccino";
+            
+            confirm.setEnabled(true);
+        }
+        if(x.getSource()==cofBlkSug) {
+            drinkName.setText("Black Coffee with Sugar || 40p");
+            
+            cost = 40;
+            
+            Drink = "Black Coffee with Sugar";
+            
+            confirm.setEnabled(true);
+        }
+        if(x.getSource()==cofLatSug) {
+            drinkName.setText("Latte with Sugar || 50p");
+            
+            cost = 50;
+            
+            Drink = "Latte with Sugar";
+            
+            confirm.setEnabled(true);
+        }
+        if(x.getSource()==cofCapSug) {
+            drinkName.setText("Cappuccino with Sugar || 70p");
+            
+            cost = 70;
+            
+            Drink = "Cappuccino with Sugar";
+            
+            confirm.setEnabled(true);
+        }
+        
+        //confirm button
+        if(x.getSource()==confirm) {
+                cofBlk.setEnabled(false);
+                cofLat.setEnabled(false);
+                cofCap.setEnabled(false);
+                cofBlkSug.setEnabled(false);
+                cofLatSug.setEnabled(false);
+                cofCapSug.setEnabled(false);
+                
+                payment.setEnabled(true);
+                
+                Input.setEnabled(true);
+                    Input.setText("Please input money..");
+                
+                twoPound.setEnabled(true);
+                onePound.setEnabled(true);
+                fifty.setEnabled(true);
+                twenty.setEnabled(true);
+                ten.setEnabled(true);
+                
+                confirm.setEnabled(false);
+        }
+        
+        //payment buttons
+        if(x.getSource()==twoPound) {
+            paid += 200;
+            paidFormat = paid;
+            payAmt.setText("" + pound.format(paidFormat/100));
+            
+            Paid.setVisible(true);
+        }
+        if(x.getSource()==onePound) {
+            paid += 100;
+            paidFormat = paid;
+            payAmt.setText("" + pound.format(paidFormat/100));
+            
+            Paid.setVisible(true);
+        }
+        if(x.getSource()==fifty) {
+            paid += 50;
+            paidFormat = paid;
+            payAmt.setText("" + pound.format(paidFormat/100));
+            
+            Paid.setVisible(true);
+        }
+        if(x.getSource()==twenty) {
+            paid += 20;
+            paidFormat = paid;
+            payAmt.setText("" + pound.format(paidFormat/100));
+            
+            Paid.setVisible(true);
+        }
+        if(x.getSource()==ten) {
+            paid += 10;
+            paidFormat = paid;
+            payAmt.setText("" + pound.format(paidFormat/100));
+            
+            Paid.setVisible(true);
+        }
+        
+		//Calculate the change required and provide a breakdown of change using the Change Calculator
+        if(x.getSource()==payment) {    
+			//Determine whether enough has been paid
+            if(cost > paid) {
+                Input.setText("** Please input the correct amount **");
+            } else {
+                //Change Calculator Instantiation
+                ChangeCalculator change = new ChangeCalculator(paid, cost);
+                int changeTotal = paid - cost;
+				
+				//Insert object Array references into a new array
+                int[] changeArr = change.calculateChange();
+                                   
+                Change.setVisible(true);
+                Breakdown.setVisible(true);
+            
+                chgTwo.setText("£2 x " + changeArr[0]);
+                chgOne.setText("£1 x " + changeArr[1]);
+                chgFifty.setText("50p x " + changeArr[2]);
+                chgTwenty.setText("20p x " + changeArr[3]);
+                chgTen.setText("10p x " + changeArr[4]);
+                
+                changeFormat = changeTotal;
+                chgTotal.setText("" + pound.format(changeFormat/100));
+            
+                twoPound.setEnabled(false);
+                onePound.setEnabled(false);
+                fifty.setEnabled(false);
+                twenty.setEnabled(false);
+                ten.setEnabled(false);
+                payment.setEnabled(false);
+            
+                Input.setText("Thank you, enjoy your Coffee");
+                
+                //File Handler Instantiation
+                TransactionFileHandler TFH = new TransactionFileHandler(paid, cost, changeTotal, Drink);
+                
+				//Write to Transaction Log
+                TFH.fileHandler();               
+                
+            }
+        }
+        
+        //Reset the program to a usable state (Return any change input and allow selection of a new drink)
+        if(x.getSource()==reset) {
+           cofBlk.setEnabled(true);
+           cofLat.setEnabled(true);
+           cofCap.setEnabled(true);
+           cofBlkSug.setEnabled(true);
+           cofLatSug.setEnabled(true);
+           cofCapSug.setEnabled(true);
+           
+           confirm.setEnabled(false);
+                
+           twoPound.setEnabled(false);
+           onePound.setEnabled(false);
+           fifty.setEnabled(false);
+           twenty.setEnabled(false);
+           ten.setEnabled(false);
+           payment.setEnabled(false);
+           
+           drinkName.setText("");
+           payAmt.setText("");
+           chgTotal.setText("");
+           chgTwo.setText("");
+           chgOne.setText("");
+           chgFifty.setText("");
+           chgTwenty.setText("");
+           chgTen.setText("");
+           
+           Input.setEnabled(false);
+           Input.setText("");
+           
+           paid = 0;
+        }      
+    }  
+}
